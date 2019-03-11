@@ -1,6 +1,8 @@
 import scapy.all as scapy
 from scapy_http import http
 import optparse
+from colorama import Fore
+from colorama import Style
 
 
 def get_arguments():
@@ -35,7 +37,7 @@ def get_password(packet):
 def sniffed_packet(packet):
     if packet.haslayer(http.HTTPRequest):
         url = get_url(packet)
-        print("[+] HTTP Request >> ", url)
+        print("[+] HTTP Request >> " + url)
 
         login_info = get_password(packet)
         if login_info:
