@@ -1,8 +1,6 @@
 import scapy.all as scapy
 from scapy_http import http
 import optparse
-from colorama import Fore
-from colorama import Style
 
 
 def get_arguments():
